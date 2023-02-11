@@ -1,4 +1,5 @@
-import { AuthProvider } from "@pankod/refine-core";
+import { AuthProvider, useNotification } from "@pankod/refine-core";
+
 import nookies from "nookies";
 
 import { supabaseClient } from "./utility";
@@ -63,5 +64,57 @@ export const authProvider: AuthProvider = {
         name: data.user.email,
       });
     }
+  },
+  register: async ({ email, password }) => {
+    const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+    });
+
+    if (error) {
+        return Promise.reject(error);
+    }
+
+    if (data) {
+        return Promise.resolve();
+    }
+  },
+  forgotPassword: async ({ email }) => {
+      const { data, error } = await supabaseClient.auth.resetPasswordForEmail(
+          email,
+          {
+              redirectTo: `${window.location.origin}/update-password`,
+          },
+      );
+
+      if (error) {
+          return Promise.reject(error);
+      }
+
+      if (data) {
+        const { open, close } = useNotification();
+
+        // open notification
+        open?.({
+            type: "success",
+            message: "Success",
+            description: "Please check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder",
+        });
+        
+        return Promise.resolve();
+      }
+  },
+  updatePassword: async ({ password }) => {
+      const { data, error } = await supabaseClient.auth.updateUser({
+          password,
+      });
+
+      if (error) {
+          return Promise.reject(error);
+      }
+
+      if (data) {
+          return Promise.resolve("/");
+      }
   },
 };

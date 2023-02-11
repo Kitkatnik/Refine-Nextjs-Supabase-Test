@@ -1,6 +1,11 @@
 import React from "react";
 import { AppProps } from "next/app";
+import { appWithTranslation, useTranslation } from "next-i18next";
+
 import { Refine } from "@pankod/refine-core";
+import routerProvider from "@pankod/refine-nextjs-router";
+import { dataProvider } from "@pankod/refine-supabase";
+import { MuiInferencer } from "@pankod/refine-inferencer/mui";
 import {
   AuthPage,
   notificationProvider,
@@ -10,13 +15,11 @@ import {
   ReadyPage,
   ErrorComponent,
 } from "@pankod/refine-mui";
-import routerProvider from "@pankod/refine-nextjs-router";
-import { dataProvider } from "@pankod/refine-supabase";
-import { MuiInferencer } from "@pankod/refine-inferencer/mui";
-import { appWithTranslation, useTranslation } from "next-i18next";
 import { RefineKbarProvider } from "@pankod/refine-kbar";
+
 import { authProvider } from "src/authProvider";
 import { supabaseClient } from "src/utility";
+
 import { ColorModeContextProvider } from "@contexts";
 import { Title, Sider, Layout, Header } from "@components/layout";
 import { OffLayoutArea } from "@components/offLayoutArea";
@@ -37,7 +40,23 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       <RefineSnackbarProvider>
         <RefineKbarProvider>
           <Refine
-            routerProvider={routerProvider}
+            routerProvider={{
+              ...routerProvider,
+              routes: [
+                  {
+                      path: "/register",
+                      element: <AuthPage type="register" />,
+                  },
+                  {
+                      path: "/forgot-password",
+                      element: <AuthPage type="forgotPassword" />,
+                  },
+                  {
+                      path: "/update-password",
+                      element: <AuthPage type="updatePassword" />,
+                  },
+              ],
+            }}
             dataProvider={dataProvider(supabaseClient)}
             authProvider={authProvider}
             LoginPage={AuthPage}
