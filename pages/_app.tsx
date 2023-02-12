@@ -40,23 +40,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       <RefineSnackbarProvider>
         <RefineKbarProvider>
           <Refine
-            routerProvider={{
-              ...routerProvider,
-              routes: [
-                  {
-                      path: "/register",
-                      element: <AuthPage type="register" />,
-                  },
-                  {
-                      path: "/forgot-password",
-                      element: <AuthPage type="forgotPassword" />,
-                  },
-                  {
-                      path: "/update-password",
-                      element: <AuthPage type="updatePassword" />,
-                  },
-              ],
-            }}
+            routerProvider={routerProvider}
             dataProvider={dataProvider(supabaseClient)}
             authProvider={authProvider}
             LoginPage={AuthPage}
